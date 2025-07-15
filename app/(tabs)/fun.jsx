@@ -1,8 +1,9 @@
 import { coding_lessons, digital_literacy_lessons } from '@/app/data/lessons';
 import Header from '@/components/ui/header';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Modal, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { List } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Circle } from 'react-native-svg';
@@ -42,6 +43,27 @@ export default function FunScreen() {
       </Svg>
     );
   };
+
+  const emojiMap = {
+    'Introduction to Web Development': '🌐',
+    'HTML Basics': '📄',
+    'CSS Basics': '🎨',
+    'Simple Portfolio Website': '🖼️',
+    'JavaScript Basics': '📜',
+    'JavaScript Advanced': '🚀',
+    'Build your own Web Application': '🏆',
+    'Digital Foundations': '💻',
+    'Productivity & Everyday Tech Skills': '🛠️',
+    'Collaboration & Creation': '🤝',
+    'Critical & Applied Use': '🔍',
+    'Media Content Creation': '🎬',
+  };
+
+  // Animation state for pressed roadmap card
+  const [pressedIndex, setPressedIndex] = useState(null);
+  const router = useRouter();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedLesson, setSelectedLesson] = useState(null);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -85,23 +107,46 @@ export default function FunScreen() {
           <View style={styles.roadmapContainer}>
             {(activeTab === 'Coding' ? coding_lessons : digital_literacy_lessons).map((lesson, index, array) => (
               <React.Fragment key={index}>
-                <View style={styles.roadmapStep}>
-                  {index === 0 && (
-                    <View style={styles.avatarCircle}>
-                      <Text style={styles.avatarText}>👤</Text>
-                    </View>
-                  )}
-
+                <Pressable
+                  onPressIn={() => setPressedIndex(index)}
+                  onPressOut={() => setPressedIndex(null)}
+                  style={({ pressed }) => [
+                    styles.roadmapStep,
+                    pressedIndex === index && { transform: [{ scale: 0.97 }] },
+                  ]}
+                >
+                  <View style={styles.avatarCircle}>
+                    <Text style={styles.avatarText}>
+                      {emojiMap[lesson.stage] || '📘'}
+                      {index === array.length - 1 ? ' 🎉' : ''}
+                    </Text>
+                  </View>
                   <View style={styles.roadmapCard}>
                     <Text style={styles.roadmapTitle}>{lesson.stage}</Text>
-                    <Pressable style={index === 0 ? styles.continueBtn : styles.viewBtn}>
+                    <Pressable
+                      style={index === 0 ? styles.continueBtn : styles.viewBtn}
+                      onPress={() => {
+                        if (index === 0) {
+                          // Navigate to lesson detail page, pass lesson stage and type
+                          router.push({
+                            pathname: '/lesson/[stage]',
+                            params: {
+                              stage: lesson.stage,
+                              type: activeTab,
+                            },
+                          });
+                        } else {
+                          setSelectedLesson(lesson);
+                          setModalVisible(true);
+                        }
+                      }}
+                    >
                       <Text style={index === 0 ? styles.continueBtnText : styles.viewBtnText}>
                         {index === 0 ? 'Continue' : 'View'}
                       </Text>
                     </Pressable>
                   </View>
-                </View>
-
+                </Pressable>
                 {index !== array.length - 1 && (
                   <View style={styles.dottedLine} />
                 )}
@@ -145,6 +190,28 @@ export default function FunScreen() {
           </View>
         )}
       </ScrollView>
+
+      {/* Modal for lesson summary */}
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.3)' }}>
+          <View style={{ backgroundColor: '#fff', borderRadius: 16, padding: 24, width: 320, maxWidth: '90%' }}>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8 }}>{selectedLesson?.stage}</Text>
+            <Text style={{ fontSize: 15, color: '#555', marginBottom: 12 }}>{selectedLesson?.description}</Text>
+            <Text style={{ fontWeight: 'bold', marginBottom: 6 }}>Topics:</Text>
+            {selectedLesson?.topics?.map((topic, i) => (
+              <Text key={i} style={{ fontSize: 14, color: '#4C43AE', marginBottom: 4 }}>• {topic.title}</Text>
+            ))}
+            <Pressable onPress={() => setModalVisible(false)} style={{ marginTop: 18, alignSelf: 'flex-end' }}>
+              <Text style={{ color: '#6C63FF', fontWeight: 'bold', fontSize: 15 }}>Close</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -379,7 +446,3 @@ const styles = StyleSheet.create({
     color: '#4C43AE',
   }
   });
-
-
-
-
