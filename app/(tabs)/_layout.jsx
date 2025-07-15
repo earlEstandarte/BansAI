@@ -9,7 +9,7 @@ import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import Entypo from '@expo/vector-icons/Entypo';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { ThemeProvider } from '@react-navigation/native';
+import { ThemeProvider } from '@/context/ThemeProvider';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function TabLayout() {

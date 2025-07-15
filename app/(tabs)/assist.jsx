@@ -4,9 +4,9 @@ import React from 'react'
 
 const Assist = () => {
   return (
-    <View>
-      <Text>Assist</Text>
-    </View>
+    <SafeAreaView> style={styles.safe}
+        <Text>Assist Screen</Text>
+    </SafeAreaView>
   )
 }
 
