@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const OPEN_AI_KEY = 'secret'
+const SECRET = 'secret'
 const URL = 'https://api.openai.com/v1/chat/completions'
 
 export const sendMessageToGPT = async(messages) => {
@@ -14,7 +14,7 @@ export const sendMessageToGPT = async(messages) => {
             },
             {
                 header:{
-                    "Authorization": `Bearer ${OPEN_AI_KEY}`,
+                    "Authorization": `Bearer ${SECRET}`,
                     "Content-Type": 'application/json'
                 }
             }
