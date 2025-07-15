@@ -23,15 +23,12 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <SafeAreaProvider>
         <Stack>
-          <Stack.Screen
-            name="index"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen name = 'auth/register.jsx'/>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          
+          <Stack.Screen name='auth/register' options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
+          <Stack.Screen name= "lesson/[stage]" options={{ headerShown: false }} />
         </Stack>
         <StatusBar style="auto" />
       </SafeAreaProvider>
